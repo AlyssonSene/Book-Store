@@ -1,10 +1,18 @@
+import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header/Header";
+import { addBook } from "../store/booksSlice";
 
 function AddBookPage() {
   const navigate = useNavigate();
-  const handleAddBook = (e) => {
-    e.preventDefault();
+  const dispatch = useDispatch();
+  const { register, handleSubmit } = useForm();
+
+  const handleBookSubmit = (data) => {
+    const id = Date.now();
+
+    dispatch(addBook({ ...data, id, isRead: false }));
     navigate("/");
   };
 
@@ -13,31 +21,39 @@ function AddBookPage() {
       <div className="container">
         <Header pageTitle={"Add Book"} />
 
-        <form className="add-form">
+        <form className="add-form" onSubmit={handleSubmit(handleBookSubmit)}>
           <div className="form-control">
             <label>Title *</label>
-            <input type="text" name="title" placeholder="Add Book Title" />
+            <input
+              type="text"
+              {...register("title")}
+              placeholder="Add Book Title"
+            />
           </div>
           <div className="form-control">
             <label>Book Cover *</label>
-            <input type="text" name="cover" placeholder="Add Cover" />
+            <input type="text" {...register("cover")} placeholder="Add Cover" />
           </div>
 
           <div className="form-control">
             <label>Author *</label>
-            <input type="text" name="author" placeholder="Add Author" />
+            <input
+              type="text"
+              {...register("author")}
+              placeholder="Add Author"
+            />
           </div>
 
           <div className="form-control">
             <label>Synopsis *</label>
             <textarea
               type="text"
-              name="synopsis"
               placeholder="Add a synopsis..."
+              {...register("synopsis")}
             />
           </div>
 
-          <button onClick={(e) => handleAddBook(e)} className="btn btn-block">
+          <button type="submit" className="btn btn-block">
             Save Book
           </button>
         </form>

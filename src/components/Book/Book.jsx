@@ -1,8 +1,16 @@
 /* eslint-disable react/prop-types */
 
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { toogleIsRead } from "../../store/booksSlice";
 
 function Book({ book }) {
+  const dispatch = useDispatch();
+
+  const handleIsRead = (e, id) => {
+    e.preventDefault();
+    dispatch(toogleIsRead(id));
+  };
   return (
     <>
       <Link to={`/book/${book.id}`}>
@@ -16,7 +24,10 @@ function Book({ book }) {
           <div className="book-cover">
             <img src={book.cover} />
 
-            <button className={book.isRead ? "isRead" : ""}>
+            <button
+              className={book.isRead ? "isRead" : ""}
+              onClick={(e) => handleIsRead(e, book.id)}
+            >
               <i className="fa-solid fa-eye"></i>
               <span>
                 {book.isRead ? "Already Read It" : "Haven't Read it yet"}
