@@ -214,6 +214,7 @@ table tr th {
 
 .book .book-cover {
   position: relative;
+  height: 100%;
 }
 .book .book-cover img {
   width: 100%;
