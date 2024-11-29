@@ -7,11 +7,14 @@ import { addBook } from "../store/booksSlice";
 function AddBookPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { register, handleSubmit } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
   const handleBookSubmit = (data) => {
     const id = Date.now();
-
     dispatch(addBook({ ...data, id, isRead: false }));
     navigate("/");
   };
@@ -25,23 +28,33 @@ function AddBookPage() {
           <div className="form-control">
             <label>Title *</label>
             <input
+              autoFocus
               type="text"
-              {...register("title")}
+              {...register("title", { required: true })}
               placeholder="Add Book Title"
             />
+            {errors.title && <span>This field is required</span>}
           </div>
           <div className="form-control">
             <label>Book Cover *</label>
-            <input type="text" {...register("cover")} placeholder="Add Cover" />
+            <input
+              type="text"
+              {...register("cover", {
+                required: true,
+              })}
+              placeholder="Add Cover"
+            />
+            {errors.cover && <span>This field is required</span>}
           </div>
 
           <div className="form-control">
             <label>Author *</label>
             <input
               type="text"
-              {...register("author")}
+              {...register("author", { required: true })}
               placeholder="Add Author"
             />
+            {errors.author && <span>This field is required</span>}
           </div>
 
           <div className="form-control">
@@ -49,8 +62,9 @@ function AddBookPage() {
             <textarea
               type="text"
               placeholder="Add a synopsis..."
-              {...register("synopsis")}
+              {...register("synopsis", { required: true })}
             />
+            {errors.synopsis && <span>This field is required</span>}
           </div>
 
           <button type="submit" className="btn btn-block">

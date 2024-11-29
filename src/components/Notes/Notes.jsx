@@ -1,68 +1,89 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable react/no-unescaped-entities */
+import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { addNote, eraseNote, useNotes } from "../../store/notesSlice";
 
-function Notes() {
-    
-   
+function Notes({ bookId }) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    resetField,
+  } = useForm();
 
-    let notes = [
-        {
-          id: 1,
-          book_id: 1,
-          title:"Page 18 - On Europe's Decline",
-          text: "The leading states of the European Union, and in particular of the eurozone, were dogged by a growing sense of decline. Their production systems and their societies that were said to be in decline, rather than Europe as a whole."
-        },
-        {
-          id: 2,
-          book_id: 1,
-          title:"Page 55 - Treaty on Friendship and Cooperation",
-          text: "The Portuguese and Spanish Governments signed the Treaty on Friendship and Cooperation at the 32nd Luso-Spanish Summit held in Trujillo in October 2021. This followed on from the commitment undertaken at the Guarda Summit in October 2020."
-        },
-        {
-          id: 3,
-          book_id: 2,
-          title:"Page 61 - On Mesopotamia",
-          text: "Jane R. McIntosh wrote the first general introduction to Mesopotamia that covers all four of the area's major ancient civilizations―Sumer, Akkad, Assyria, and Babylonia."
-        }
-        
-    ];
-    
-    return (
-      <>
+  let notes = useNotes().filter((note) => note.book_id == bookId);
 
-        <div className="notes-wrapper">
+  const dispatch = useDispatch();
 
-            <h2>Reader's Notes</h2>
+  const handleEraseNote = (id) => {
+    if (confirm("Are you sure you want to delete this note?")) {
+      dispatch(eraseNote(id));
+    }
+  };
 
-            <div className="notes">
-                {notes.map(note => 
-                    <div key={note.id} className="note">
-                        <div className="erase-note">Erase note</div>
-                        <h3>{note.title}</h3>
-                        <p>{note.text}</p>
-                    </div>
-                    )}
+  const handleSubmitNote = (data) => {
+    const noteId = Date.now();
+    const newNote = { ...data, book_id: bookId, id: noteId };
+    dispatch(addNote(newNote));
+    resetField("text");
+    resetField("title");
+  };
+
+  return (
+    <>
+      <div className="notes-wrapper">
+        <h2>Reader's Notes</h2>
+        {notes.length ? (
+          <div className="notes">
+            {notes.map((note) => (
+              <div key={note.id} className="note">
+                <div
+                  className="erase-note"
+                  onClick={() => handleEraseNote(note.id)}
+                >
+                  Erase note
+                </div>
+                <h3>{note.title}</h3>
+                <p>{note.text}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div>
+            <span>There's no notes yet</span>
+          </div>
+        )}
+        <details>
+          <summary>Add a note</summary>
+          <form className="add-note" onSubmit={handleSubmit(handleSubmitNote)}>
+            <div className="form-control">
+              <label>Title *</label>
+              <input
+                type="text"
+                {...register("title", { required: true })}
+                placeholder="Add a note title"
+              />
+              {errors.title && <span>This field is required</span>}
+            </div>
+            <div className="form-control">
+              <label>Note *</label>
+              <textarea
+                type="text"
+                {...register("text", { required: true })}
+                placeholder="Add note"
+              />
+              {errors.text && <span>This field is required</span>}
             </div>
 
-            <details>
-                <summary>Add a note</summary>
-                <form className="add-note">
-                    <div className="form-control">
-                        <label>Title *</label>
-                        <input type="text" name="title" placeholder="Add a note title" />
-                    </div>
-                    <div className="form-control">
-                        <label>Note *</label>
-                        <textarea type="text" name="note" placeholder="Add note" />
-                    </div>
-                    
-                    <button className="btn btn-block">Add Note</button>
-                </form>
-            </details>
+            <button className="btn btn-block" type="onSubmit">
+              Add Note
+            </button>
+          </form>
+        </details>
+      </div>
+    </>
+  );
+}
 
-        </div>
-
-      </>
-    )
-  }
-  
-  export default Notes
-  
+export default Notes;

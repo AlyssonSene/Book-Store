@@ -2,6 +2,7 @@ import { useDispatch } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Notes from "../components/Notes/Notes";
 import { eraseBook, toogleIsRead, useBooks } from "../store/booksSlice";
+import { eraseBookNotes } from "../store/notesSlice";
 
 function SingleBookPage() {
   const books = useBooks();
@@ -15,8 +16,13 @@ function SingleBookPage() {
   const book = books.find((book) => book.id === parseInt(id));
 
   const handleEraseBook = (id) => {
-    if (confirm("Are you sure you want to erase this book?")) {
+    if (
+      confirm(
+        "Are you sure you want to erase this book and all note associated with it?"
+      )
+    ) {
       dispatch(eraseBook(id));
+      dispatch(eraseBookNotes(id));
       navigate("/");
     }
   };
@@ -62,7 +68,7 @@ function SingleBookPage() {
               </div>
             </div>
 
-            <Notes />
+            <Notes bookId={id} />
           </div>
         ) : (
           <div>
