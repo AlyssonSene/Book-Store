@@ -13,7 +13,7 @@ function SingleBookPage() {
 
   const navigate = useNavigate();
 
-  const book = books.find((book) => book.id === parseInt(id));
+  const book = books.find((book) => book.id === id);
 
   const handleEraseBook = (id) => {
     if (

@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 import Header from "../components/Header/Header";
 import { addBook } from "../store/booksSlice";
 
@@ -14,7 +15,7 @@ function AddBookPage() {
   } = useForm();
 
   const handleBookSubmit = (data) => {
-    const id = Date.now();
+    const id = uuidv4();
     dispatch(addBook({ ...data, id, isRead: false }));
     navigate("/");
   };
